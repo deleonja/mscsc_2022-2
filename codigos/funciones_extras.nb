@@ -1,0 +1,392 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     13472,        384]
+NotebookOptionsPosition[     11077,        335]
+NotebookOutlinePosition[     11469,        351]
+CellTagsIndexPosition[     11426,        348]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Funciones varias", "Section",
+ CellChangeTimes->{{3.853900951437191*^9, 
+  3.853900960108488*^9}},ExpressionUUID->"ab06ca5b-8939-4f61-92e2-\
+fd743d2f79fb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Function", " ", "to", " ", "find", " ", "the", " ", "pivoting", " ", 
+    RowBox[{"element", "'"}], "s", " ", "row", " ", "in", " ", "an", " ", 
+    "specific", " ", "column", " ", "C", " ", "of", " ", "a", " ", "matrix", 
+    " ", "M"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"PivotingRow", "[", 
+     RowBox[{"M_", ",", "C_"}], "]"}], ":=", 
+    RowBox[{"FromDigits", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"FirstPosition", "[", 
+         RowBox[{"#", ",", 
+          RowBox[{"Max", "[", "#", "]"}]}], "]"}], "&"}], "[", 
+       RowBox[{"Abs", "[", 
+        RowBox[{"M", "[", 
+         RowBox[{"[", 
+          RowBox[{
+           RowBox[{"C", ";;"}], ",", "C"}], "]"}], "]"}], "]"}], "]"}], "+", 
+      RowBox[{"(", 
+       RowBox[{"C", "-", "1"}], ")"}]}], "]"}]}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Function", " ", "to", " ", "construct", " ", "the", " ", "permutation", 
+     " ", "matrix", " ", "between", " ", "the", " ", "pivoting", " ", "row", 
+     " ", "p", " ", "and", " ", "the", " ", "current", " ", "row", " ", "R", 
+     " ", "during", " ", "Gaussian", " ", "elimination", " ", "procedure", 
+     " ", "of", " ", "matrix", " ", "M"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"PermutationMatrixForPivoting", "[", 
+     RowBox[{"M_", ",", "R_", ",", "p_"}], "]"}], ":=", 
+    RowBox[{"ReplacePart", "[", 
+     RowBox[{
+      RowBox[{"Permute", "[", 
+       RowBox[{
+        RowBox[{"IdentityMatrix", "[", 
+         RowBox[{"Length", "[", "M", "]"}], "]"}], ",", 
+        RowBox[{"Cycles", "[", 
+         RowBox[{"{", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"p", "\[NotEqual]", "R"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"p", ",", "R"}], "}"}], ",", 
+            RowBox[{"{", "p", "}"}]}], "]"}], "}"}], "]"}]}], "]"}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"R", ",", "p"}], "}"}], "\[Rule]", 
+       RowBox[{"1", "/", 
+        RowBox[{"M", "[", 
+         RowBox[{"[", 
+          RowBox[{"p", ",", "R"}], "]"}], "]"}]}]}]}], "]"}]}], 
+   "\[IndentingNewLine]"}]}]], "Input",ExpressionUUID->"ac9fce66-e3e2-407d-\
+ae98-aeabaf4087ff"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "PivotingRow[",
+ StyleBox["M,C",
+  FontSlant->"Italic"],
+ "]"
+}], "Subsection",
+ CellChangeTimes->{{3.8538137433695717`*^9, 
+  3.853813761499827*^9}},ExpressionUUID->"36b150c4-6a9c-4bbc-98df-\
+1ff436f8f7dc"],
+
+Cell["Consideremos una matrix M generada aleatoriamente ", "Text",
+ CellChangeTimes->{{3.853814742501175*^9, 
+  3.85381474711965*^9}},ExpressionUUID->"d77deb5c-1128-4830-ab46-\
+b4348336f576"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SeedRandom", "[", "11272", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"M", "=", 
+   RowBox[{"RandomInteger", "[", 
+    RowBox[{"9", ",", 
+     RowBox[{"{", 
+      RowBox[{"6", ",", "6"}], "}"}]}], "]"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.853813679252655*^9, 3.8538137241193943`*^9}, {
+  3.853814738401917*^9, 3.853814739941576*^9}},
+ CellLabel->"In[19]:=",ExpressionUUID->"0b1dc978-57bf-4973-8fa1-f84270672463"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"2", "6", "8", "8", "6", "1"},
+     {"7", "3", "2", "8", "3", "1"},
+     {"4", "0", "1", "3", "9", "4"},
+     {"5", "8", "4", "8", "7", "7"},
+     {"1", "1", "7", "8", "9", "6"},
+     {"5", "2", "9", "0", "2", "9"}
+    },
+    GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.853813726039431*^9, 3.853814372454157*^9, 
+  3.8538529211396217`*^9, 3.853853013052178*^9, 3.853891670045608*^9},
+ CellLabel->
+  "Out[20]//MatrixForm=",ExpressionUUID->"57b02020-1e49-4cb4-806b-\
+21bf8995ebb0"]
+}, Open  ]],
+
+Cell["\<\
+El elemento pivotante para la primera columna se encuentra en la fila 2.\
+\>", "Text",
+ CellChangeTimes->{{3.853813786728876*^9, 
+  3.853813801158195*^9}},ExpressionUUID->"80e64512-1b30-4e53-a8a9-\
+68ca2c297626"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PivotingRow", "[", 
+  RowBox[{"M", ",", "1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.853813768121337*^9, 3.85381377371885*^9}},
+ CellLabel->"In[21]:=",ExpressionUUID->"6600a3de-64af-483e-8f69-82de74b0b330"],
+
+Cell[BoxData["2"], "Output",
+ CellChangeTimes->{3.853813774743435*^9, 3.853853013075045*^9, 
+  3.8538916701354856`*^9},
+ CellLabel->"Out[21]=",ExpressionUUID->"fd41d338-a5f6-4bf0-886c-65c7cf7b2d96"]
+}, Open  ]]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "PermutationMatrixForPivoting[",
+ StyleBox["M,r,p",
+  FontSlant->"Italic"],
+ "]"
+}], "Subsection",
+ CellChangeTimes->{{3.853813816178628*^9, 
+  3.85381383401768*^9}},ExpressionUUID->"ac8563c4-1638-4c7e-b86f-\
+4628e847f810"],
+
+Cell["Consideremos una matrix M generada aleatoriamente ", "Text",
+ CellChangeTimes->{{3.853814742501175*^9, 
+  3.85381474711965*^9}},ExpressionUUID->"77f25b0b-edc8-4fef-b9ad-\
+4c911edc8c4e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SeedRandom", "[", "11272", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"M", "=", 
+   RowBox[{"RandomInteger", "[", 
+    RowBox[{"9", ",", 
+     RowBox[{"{", 
+      RowBox[{"6", ",", "6"}], "}"}]}], "]"}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.853813679252655*^9, 3.8538137241193943`*^9}, {
+  3.853814738401917*^9, 3.853814739941576*^9}},
+ CellLabel->"In[22]:=",ExpressionUUID->"f0a0a5ea-b6ff-4091-b85c-d84181d5724d"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"2", "6", "8", "8", "6", "1"},
+     {"7", "3", "2", "8", "3", "1"},
+     {"4", "0", "1", "3", "9", "4"},
+     {"5", "8", "4", "8", "7", "7"},
+     {"1", "1", "7", "8", "9", "6"},
+     {"5", "2", "9", "0", "2", "9"}
+    },
+    GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.853813726039431*^9, 3.853814372454157*^9, 
+  3.8538530211109667`*^9, 3.853891670151779*^9},
+ CellLabel->
+  "Out[23]//MatrixForm=",ExpressionUUID->"ba9fb3ab-60cf-430a-b3de-\
+fa4eeab416ef"]
+}, Open  ]],
+
+Cell[TextData[{
+ "La matriz de permutaci\[OAcute]n ",
+ Cell[BoxData[
+  FormBox["P", TraditionalForm]],ExpressionUUID->
+  "a7c68579-19cb-4f63-af9d-7acd70e337c9"],
+ " para intercambiar las filas 1 y 2 (pivotante) es:  "
+}], "Text",
+ CellChangeTimes->{{3.853813872348144*^9, 
+  3.853813941436144*^9}},ExpressionUUID->"28be3511-a3f5-4b9e-bb22-\
+2c16776fdee0"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"P", "=", 
+   RowBox[{"PermutationMatrixForPivoting", "[", 
+    RowBox[{"M", ",", "1", ",", "2"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.8538138392622232`*^9, 3.8538138612269487`*^9}, {
+  3.853813971025939*^9, 3.85381397217665*^9}},
+ CellLabel->"In[24]:=",ExpressionUUID->"412f92a1-c6a5-4279-a5f3-1da5ed4560c9"],
+
+Cell[BoxData["7"], "Print",
+ CellChangeTimes->{3.853891670167746*^9},
+ CellLabel->
+  "During evaluation of \
+In[24]:=",ExpressionUUID->"e4ec71b6-42d3-4abc-9c15-777f7a930494"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"0", 
+      FractionBox["1", "7"], "0", "0", "0", "0"},
+     {"1", "0", "0", "0", "0", "0"},
+     {"0", "0", "1", "0", "0", "0"},
+     {"0", "0", "0", "1", "0", "0"},
+     {"0", "0", "0", "0", "1", "0"},
+     {"0", "0", "0", "0", "0", "1"}
+    },
+    GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.8538138513118134`*^9, 3.853813861769867*^9}, {
+   3.853813944282625*^9, 3.8538139725872297`*^9}, 3.853814221906373*^9, 
+   3.8538530227862797`*^9, 3.853891670168778*^9},
+ CellLabel->
+  "Out[24]//MatrixForm=",ExpressionUUID->"fa9dd456-8b79-431f-a786-\
+46645ae3abd9"]
+}, Open  ]],
+
+Cell["Chequeemos que s\[IAcute] intercambia correctamente las filas:", "Text",
+ CellChangeTimes->{{3.853813946616466*^9, 
+  3.853813959175901*^9}},ExpressionUUID->"053419c4-f5d2-470b-88b7-\
+a0140dd11673"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"P", ".", "M"}], "]"}]], "Input",
+ CellChangeTimes->{{3.853813960708305*^9, 3.853813975567024*^9}, {
+  3.8538141652719593`*^9, 3.853814168242177*^9}, {3.8538142259698963`*^9, 
+  3.853814243629361*^9}},
+ CellLabel->"In[25]:=",ExpressionUUID->"a9d52e2b-6da2-4da6-b796-634e881792eb"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"(", "\[NoBreak]", GridBox[{
+     {"1", 
+      FractionBox["3", "7"], 
+      FractionBox["2", "7"], 
+      FractionBox["8", "7"], 
+      FractionBox["3", "7"], 
+      FractionBox["1", "7"]},
+     {"2", "6", "8", "8", "6", "1"},
+     {"4", "0", "1", "3", "9", "4"},
+     {"5", "8", "4", "8", "7", "7"},
+     {"1", "1", "7", "8", "9", "6"},
+     {"5", "2", "9", "0", "2", "9"}
+    },
+    GridBoxAlignment->{"Columns" -> {{Center}}, "Rows" -> {{Baseline}}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.7]}, 
+        Offset[0.27999999999999997`]}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.4]}, 
+        Offset[0.2]}}], "\[NoBreak]", ")"}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{
+  3.853813975891349*^9, {3.853814233119609*^9, 3.853814243962596*^9}, 
+   3.8538530245258512`*^9, 3.853891670184765*^9},
+ CellLabel->
+  "Out[25]//MatrixForm=",ExpressionUUID->"a0ffc7c3-64d6-4626-bfa6-\
+9275b2db8bfc"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{765, 492},
+WindowMargins->{{0, Automatic}, {0, Automatic}},
+FrontEndVersion->"12.2 for Linux x86 (64-bit) (December 12, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"8ddd563c-bc5c-48b5-9e21-475ac6b22298"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 161, 3, 50, "Section",ExpressionUUID->"ab06ca5b-8939-4f61-92e2-fd743d2f79fb"],
+Cell[744, 27, 2315, 59, 135, "Input",ExpressionUUID->"ac9fce66-e3e2-407d-ae98-aeabaf4087ff"],
+Cell[CellGroupData[{
+Cell[3084, 90, 224, 8, 41, "Subsection",ExpressionUUID->"36b150c4-6a9c-4bbc-98df-1ff436f8f7dc"],
+Cell[3311, 100, 191, 3, 35, "Text",ExpressionUUID->"d77deb5c-1128-4830-ab46-b4348336f576"],
+Cell[CellGroupData[{
+Cell[3527, 107, 489, 11, 53, "Input",ExpressionUUID->"0b1dc978-57bf-4973-8fa1-f84270672463"],
+Cell[4019, 120, 901, 24, 70, "Output",ExpressionUUID->"57b02020-1e49-4cb4-806b-21bf8995ebb0"]
+}, Open  ]],
+Cell[4935, 147, 222, 5, 35, "Text",ExpressionUUID->"80e64512-1b30-4e53-a8a9-68ca2c297626"],
+Cell[CellGroupData[{
+Cell[5182, 156, 231, 4, 30, "Input",ExpressionUUID->"6600a3de-64af-483e-8f69-82de74b0b330"],
+Cell[5416, 162, 198, 3, 70, "Output",ExpressionUUID->"fd41d338-a5f6-4bf0-886c-65c7cf7b2d96"]
+}, Open  ]]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[5663, 171, 240, 8, 30, "Subsection",ExpressionUUID->"ac8563c4-1638-4c7e-b86f-4628e847f810"],
+Cell[5906, 181, 191, 3, 27, "Text",ExpressionUUID->"77f25b0b-edc8-4fef-b9ad-4c911edc8c4e"],
+Cell[CellGroupData[{
+Cell[6122, 188, 489, 11, 39, "Input",ExpressionUUID->"f0a0a5ea-b6ff-4091-b85c-d84181d5724d"],
+Cell[6614, 201, 879, 24, 94, "Output",ExpressionUUID->"ba9fb3ab-60cf-430a-b3de-fa4eeab416ef"]
+}, Open  ]],
+Cell[7508, 228, 355, 9, 27, "Text",ExpressionUUID->"28be3511-a3f5-4b9e-bb22-2c16776fdee0"],
+Cell[CellGroupData[{
+Cell[7888, 241, 374, 7, 22, "Input",ExpressionUUID->"412f92a1-c6a5-4279-a5f3-1da5ed4560c9"],
+Cell[8265, 250, 174, 4, 18, "Print",ExpressionUUID->"e4ec71b6-42d3-4abc-9c15-777f7a930494"],
+Cell[8442, 256, 983, 26, 101, "Output",ExpressionUUID->"fa9dd456-8b79-431f-a786-46645ae3abd9"]
+}, Open  ]],
+Cell[9440, 285, 204, 3, 27, "Text",ExpressionUUID->"053419c4-f5d2-470b-88b7-a0140dd11673"],
+Cell[CellGroupData[{
+Cell[9669, 292, 333, 6, 22, "Input",ExpressionUUID->"a9d52e2b-6da2-4da6-b796-634e881792eb"],
+Cell[10005, 300, 1032, 30, 101, "Output",ExpressionUUID->"a0ffc7c3-64d6-4626-bfa6-9275b2db8bfc"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
