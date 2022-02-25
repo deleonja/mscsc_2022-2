@@ -4,17 +4,203 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{physics}
+\usepackage{hyperref}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\usepackage[draft,inline,nomargin]{fixme} \fxsetup{theme=color}
+\definecolor{jacolor}{RGB}{200,40,0} \FXRegisterAuthor{ja}{aja}{\color{jacolor}JA}
+
+\newcommand{\mcM}{\mathcal{M}}
+
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
+\renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
+
+%%%%% Author
 \author{José Alfredo de León}
+
+%%%% Title 
 \title{Tarea 1\\
 \large{Métodos de Simulación Computacional para Sistemas Cuánticos - 2022-2}}
+
+
 \begin{document}
-\date{14 de febrero de 2022}
+\date{15 de febrero de 2022}
 \maketitle
 
-\section{Objetivo}
+\section{Objetivos}
+\subsection{Objetivo general}
+Implementar desde cero el método de eliminación de Gauss-Jordan en Mathematica.
+
+\subsection{Objetivos específicos}
+\begin{enumerate}
+\item Utilizar el paradigma de la programación modular.
+\item Implementar un código cuyas rutinas puedan ser reutilizadas
+para otras implementaciones.
+\item Tomar ventaja del paradigma de Mathematica.
+\end{enumerate}
+
 \section{El problema}
-\section{Algoritmo}
-\section{Implementación}
-\section{Discusión}
+La resolución de los sistemas de ecuaciones lineales, dependiendo de su tamaño,
+puede convertirse en una tarea titánica e impráctica de realizar a mano. 
+Por esta razón, una solución práctica es implementar numéricamente
+la resolución de los sistemas de ecuaciones lineales. 
+
+Para este trabajo vamos a limitarnos a un método en particular: eliminación de
+Gauss-Jordan. Para ilustrar qué hace el método consideremos el sistema de ecuaciones
+\begin{align}\label{eq:linear_system}
+a_{i,1}x_1+\ldots+a_{i,j}x_j+\ldots+a_{i,n}x_n=b_{i}, 
+\quad a_{i,j}\in \mathbb{R},\quad
+i=1,2,\ldots,k,\quad j=1,2,\ldots,n,
+\end{align}
+donde $k$ puede ser como máximo igual a $n$.
+Del álgebra lineal se sabe que para $n$ variables $x_j$ se tienen hasta $n$
+ecuaciones linealmente independientes. Razón por la cual, sin pérdida de la
+generalidad, cualquier sistema lineal con más ecuaciones que variables puede
+reducirse a \eqref{eq:linear_system}. El sistema \eqref{eq:linear_system}
+puede escribirse en forma matricial como 
+\begin{align}
+\mqty(a_{1,1}&\dots&a_{1,j}&\dots&a_{1,n}\\
+\vdots&\ddots&\vdots&\ddots&\vdots\\
+a_{i,1}&\dots&a_{i,j}&\dots&a_{i,n}\\
+\vdots&\ddots&\vdots&\ddots&\vdots\\
+a_{n,1}&\dots&a_{n,j}&\dots&a_{n,n})
+\mqty(x_1\\ \vdots\\ x_i\\ \vdots\\ x_n)=
+\mqty(b_1\\ \vdots\\ b_i\\ \vdots\\ b_n),
+\end{align}
+cuya solución se reduce a transformar la matriz aumentada
+\begin{align}\label{eq:augmented_matrix}
+\mqty(A&\vec b)=\mqty(a_{1,1}&\dots&a_{1,j}&\dots&a_{1,n}&b_1\\
+\vdots&\ddots&\vdots&\ddots&\vdots&\vdots\\
+a_{i,1}&\dots&a_{i,j}&\dots&a_{i,n}&b_i\\
+\vdots&\ddots&\vdots&\ddots&\vdots&\vdots\\
+a_{n,1}&\dots&a_{n,j}&\dots&a_{n,n}&b_n)
+\end{align}
+hasta la forma
+\begin{align}\label{eq:lin_eq_solution}
+\mqty(\mathbb{I}_n&\vec c)=
+\mqty(1&\dots&0&\dots&0&c_1\\
+\vdots&\ddots&\vdots&\ddots&\vdots&\vdots\\
+0&\dots&1&\dots&0&c_i\\
+\vdots&\ddots&\vdots&\ddots&\vdots&\vdots\\
+0&\dots&0&\dots&1&c_n),
+\end{align}
+en la que hay una matriz idendidad de orden $n$ en las antiguas posiciones 
+de la submatriz $A$ y la última columna con los elementos $c_i$ es lo
+que resulta de aplicar las operaciones correspondientes a las filas de 
+\eqref{eq:augmented_matrix} para transformarla a la forma \eqref{eq:lin_eq_solution}.
+La solución del sistema de ecuaciones \eqref{eq:linear_system} es
+$x_i=c_i$.
+
+Debemos de resaltar que los sistemas de la forma 
+\eqref{eq:linear_system} con infinitas soluciones no pueden transformarse hasta la 
+forma \eqref{eq:lin_eq_solution}, sino únicamente hasta la forma de una
+matriz triangular superior en las antiguas posiciones de la submatriz $A$.
+
+El método de Gauss-Jordan consiste entonces de dos partes:
+\begin{enumerate}
+\item Fase de avance: en esta fase se hacen las operaciones necesarias
+entre las filas de la matriz \eqref{eq:augmented_matrix} de tal manera que
+se lleve hasta la forma de una matriz triangular superior. En esta fase el objetivo
+es transformar la matriz \eqref{eq:augmented_matrix} hasta una matriz 
+de la forma 
+\begin{align}\label{eq:upper_triang}
+\mqty(1&\dots&\tilde{a}_{1,j}&\dots&\tilde{a}_{1,n}&c_1\\
+\vdots&\ddots&\vdots&\ddots&\vdots&\vdots\\
+0&\dots&1&\dots&\tilde{a}_{i,j}&c_i\\
+\vdots&\ddots&\vdots&\ddots&\vdots&\vdots\\
+0&\dots&0&\dots&1&c_n),
+\end{align}
+\item Fase de retroceso: en esta fase se hacen las operaciones necesarias
+entre las filas de la matriz triangular superior que resultó de la fase de avance
+para conseguir una matriz de la forma \eqref{eq:lin_eq_solution}. 
+\end{enumerate}
+Es necesario mencionar que para los sistemas de ecuaciones con infinitas 
+soluciones no se puede transformar la matriz \eqref{eq:augmented_matrix}
+hasta la forma de la matriz \eqref{eq:upper_triang}, sino hasta una matriz
+que es triangular superior, pero con uno o más ceros sobre la diagonal. 
+
+En la implementación numérica pueden ocurrir errores de redondeo. 
+Por esto, una forma para evitar este tipo de problemas se utiliza
+el pivoteo parcial o total. En general, el pivoteo consiste en intercambiar
+filas y columnas para mover el elemento mayor en valor absoluto de la 
+submatriz $A$ hacia la posición de $a_{k,k}$ antes de hacer las operaciones
+sobre las filas necesarias para hacer cero los elementos de matriz por
+debajo de la posición de  $a_{k,k}$. En el pivoteo parcial 
+se intercambian sólo filas y el objetivo es mover el número mayor en 
+valor absoluto en la $k$-ésima columna. En el pivoteo 
+total se intercambian filas y columnas para llevar el elemento mayor en valor absoluto,
+en la submatriz de $A$ formada borrando las filas de arriba y columnas a la
+izquierda de las $k$-ésimas fila y columna, hacia la posición de $a_{k,k}$.
+
+\section{Parte 1: Ejercicios a mano}
+Refiérase al repositorio de github \href{https://github.com/deleonja/mscsc\_2022-2}
+{https://github.com/deleonja/mscsc\_2022-2}, al archivo \verb|tarea_01.nb|
+en la dirección \verb|codigos/|, para encontrar el notebook de Mathematica
+en el que se hicieron los cálculos a mano en la sección ``Parte 1: Ejercicios a mano''. 
+
+\section{Parte 2: Implementación Gauss-Jordan}
+\subsection{Algoritmo}
+El algoritmo detrás de nuestra implementación de Gauss-Jordan
+es el que enunciamos a continuación.
+
+Entrada: matriz aumentada $\mcM$ de la forma \eqref{eq:augmented_matrix} 
+de un sistema de ecuaciones como en \eqref{eq:linear_system}. Salida:
+lista con la matriz escalonada de $\mcM$ y vector con el registro de
+los intercambios de las columnas durante el pivoteo.
+\begin{enumerate}
+\item Para cada fila $i$ de $\mcM$:
+\begin{enumerate}
+\item Si la submatriz de $A$ 
+[vea la ec. \eqref{eq:augmented_matrix}] que se forma borrando las filas
+y columnas arriba y hacia la izquierda de la posición de $\mcM_{i,i}$ es distinta
+de la matriz \textbf{0}, entonces:
+\begin{enumerate}
+\item Buscar el elemento pivotante $p$ en la submatriz de $A$ 
+[vea la ec. \eqref{eq:augmented_matrix}] que se forma borrando las filas
+y columnas arriba y hacia la izquierda de la posición de $\mcM_{i,i}$. La posición 
+del elemento pivotante es $(p_i,p_j)$.
+\item Guardar registro del intercambio de columnas.
+\item Intercambiar las filas $\{i,p_i\}$ y las columnas $\{j,p_j\}$ en $\mcM$, y multiplicar
+la nueva fila $i$ de $\mcM$ por $1/p$. De esta manera conseguimos hacer los intercambios
+y operaciones necesarias para colocar un 1 en la posición $(i,i)$ de $\mcM$.
+\item Hacer las operaciones entre filas necesarias para hacer cero todos 
+los elementos de matriz $\mcM_{k,i}$, para $k=i+1,i+2,\ldots,n$.
+\end{enumerate}
+\end{enumerate}
+\item Para cada fila $i$ que tiene un 1 en la posición $(i,i)$ de la $\mcM$ 
+transormada en el paso 1.1:
+\begin{enumerate}
+\item Hacer las operaciones entre filas necesarias para hacer cero todos 
+los elementos de matriz $\mcM_{k,i}$, para $k=1,2,\ldots,i-1$.
+\end{enumerate}
+\end{enumerate}
+
+\subsection{Implementación}
+Refiérase al repositorio de github \href{https://github.com/deleonja/mscsc\_2022-2}
+{https://github.com/deleonja/mscsc\_2022-2}, al archivo \verb|tarea_01.nb|
+en la dirección \verb|codigos/|, para encontrar el notebook de Mathematica
+en el que se detalla la implementación en la sección ``Parte 2: Implementación
+Gauss-Jordan''. 
+Para la implementación utilizamos
+el paradigma de programación modular con el objetivo de poder reutilizar 
+rutinas en el futuro, como para la factorización LU.
+
+\subsection{Discusión}
+La tarea de implementar el procediimento de Gauss-Jordan fue exitosa. 
+Nuestros resultados de resolver los ejercicios de la parte 1 utilizando 
+la implementación de Gauss-Jordan son consistentes con nuestros
+resultados de los ejercicios hechos a mano de la parte 1. 
+Considerando que los ejercicios de 
+la parte 1 consisten en un varios tipos de sistemas lineales de ecuaciones,
+como inhómogeneos, homogéneos con única e infinitas soluciones, y sistemas 
+con número de ecuaciones distinto al número de variables; tenemos
+la certeza de haber probado exitosamente 
+nuestra implementación en varios tipos de sistemas de ecuaciones lineales. 
+
+Hemos de resaltar que la motivación detrás de nuestras rutinas con tareas 
+tan específicas para implementar Gauss-Jordan es para dejar abierta la posibilidad
+a reutilizar las mismas rutinas para implementaciones en el futuro.
+
 \end{document}
