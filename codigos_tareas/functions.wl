@@ -1,9 +1,9 @@
 (* ::Package:: *)
 
-(* functions.m *)
+(* functions.wl *)
 (* Author: Jos\[EAcute] Alfredo de Le\[OAcute]n *)
 (* First created: February 18, 2022 *)
-(* Last update:  *)
+(* Last update: March, 4, 2022 *)
 BeginPackage["functions`"]
 PivotIndex::usage="PivotIndex[] finds the pivot element's index in the submatrix \[ScriptM] of matrix M, formed by deleting rows and columns above and to the left of \!\(\*SubscriptBox[\(M\), \(i, i\)]\). PivotIndex[] implements the search of the largest matrix element of the absolute value of M. It takes into account that the input matrix M could be the augmented matrix of a linear system of equations, then the last column is left out of pivoting procedure."
 Pivot::usage="Pivot[] does the pivoting in the submatrix \[ScriptM] of matrix M, where Subscript[\[ScriptM], 1,1]=Subscript[M, i,i]."
@@ -14,6 +14,11 @@ MatrixToZeroAbovePivot::usage="Function to construct the matrix that zeroes all 
 GaussianElimination::usage="Function to implement the Gaussian elimination procedure of matrix M."
 BackElimination::usage="Function to implement the back elimination procedure of the uppper-triangular matrix Udummy."
 GaussJordan::usage="Function to implement Gauss Jordan."
+Assignationk::usage="Assignationk[M,N,n] computes the value of k for the Fock state n of N bosons and M sites"
+HilbertSpaceDim::usage="HilbertSpaceDim[N, M] computes the dimension of Hilbert Space of N bosons and M sites"
+FockBasis::usage="FockBasis[N, M] computes the basis of Fock states for N bosons and M sites"
+
+
 
 Begin["`Private`"]
 (* PivotIndex[] finds the pivot element's index in the submatrix \[ScriptM] of matrix M, formed by deleting rows and columns above and to the left of Subscript[M, i,i]. PivotIndex[] implements the search of the largest matrix element of the absolute value of M. It takes into account that the input matrix M could be the augmented matrix of a linear system of equations, then the last column is left out of pivoting procedure. *)
@@ -68,7 +73,7 @@ Table[
 If[AnyTrue[Flatten[If[SquareMatrixQ[Mdummy],Mdummy[[i;;,i;;]],Mdummy[[i;;,i;;-2]]]],#!=0&],
 {Mdummy,colSwaps}=Pivot[Mdummy,i,colSwaps];
 Mdummy[[i,i]]=Round[Mdummy[[i,i]]];
-Mdummy=MatrixToZeroUnderPivot[Mdummy,i].Mdummy;];
+Mdummy=MatrixToZeroUnderPivot[Mdummy,i] . Mdummy;];
 ,{i,N}];
 {Mdummy,colSwaps}
 ]
@@ -79,7 +84,7 @@ U=Udummy;
 (* Find the last 1 on the diagonal *)
 N=If[AnyTrue[#,#==0&],FromDigits[FirstPosition[#,0]]-1,Length[U]]&[Table[U[[i,i]],{i,Length[U]}]];
 (* Iterate to make zeroes above diagonal 1's. *)
-Table[U=MatrixToZeroAbovePivot[U,i].U;
+Table[U=MatrixToZeroAbovePivot[U,i] . U;
 ,{i,2,N}];
 U
 ]
@@ -87,6 +92,37 @@ U
 
 (* Function to implement Gauss Jordan *)
 GaussJordan[M_]:={BackElimination[#[[1]]],#[[2]]}&[GaussianElimination[M]]
+
+
+(* Assignationk[M,N,n] computes the value of k for the Fock state n of N bosons and M sites *)
+Assignationk[M_,N_,fockState_]:=If[fockState[[1;;M-1]]==ConstantArray[0,M-1],M-1,FromDigits[Last[Position[Normal[fockState[[1;;M-1]]],x_ /;x!=0]]]]
+
+
+(* HilbertSpaceDim[N, M] computes the dimension of Hilbert Space of N bosons and M sites *)
+HilbertSpaceDim[N_,M_]:=(N+M-1)!/(N!(M-1)!)
+
+
+(* FockBasis[N, M] computes the basis of Fock states for N bosons and M sites *)
+FockBasis[N_,M_]:=Module[{k,fockState},
+k=1;
+Join[
+(* Compute the first lexycographical Fock state *)
+{fockState=SparseArray[{1->N},{N}]},
+(* Construct the following elements of Fock basis *)
+Table[
+(* With \[Eta] the new Fock state and n the previous one, assign Subscript[\[Eta], i]=Subscript[n, i] (1<=i<=k-1), Subscript[\[Eta], k]=Subscript[n, k]-1 y Subscript[\[Eta], i]=0 (i>=k+2) *)
+fockState=SparseArray[Join[Table[i->fockState[[i]],{i,k-1}],{k->fockState[[k]]-1}],{N}];
+(* With \[Eta] the new Fock state and n the previous one, assign Subscript[\[Eta], k+1]=N-\!\(
+\*UnderoverscriptBox[\(\[Sum]\), \(i = 1\), \(k\)]
+\*SubscriptBox[\(\[Eta]\), \(i\)]\) *)
+fockState[[k+1]]=N-Total[fockState[[1;;k]]];
+(* Compute next value of k *)
+k=Assignationk[M,N,fockState];
+fockState
+,HilbertSpaceDim[N,M]-1]
+]
+]
+
 
 End[];
 EndPackage[]
