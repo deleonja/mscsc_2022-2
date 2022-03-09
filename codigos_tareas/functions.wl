@@ -22,12 +22,12 @@ FockBasis::usage="FockBasis[N, M] computes the basis of Fock states for N bosons
 
 Begin["`Private`"]
 (* PivotIndex[] finds the pivot element's index in the submatrix \[ScriptM] of matrix M, formed by deleting rows and columns above and to the left of Subscript[M, i,i]. PivotIndex[] implements the search of the largest matrix element of the absolute value of M. It takes into account that the input matrix M could be the augmented matrix of a linear system of equations, then the last column is left out of pivoting procedure. *)
-PivotIndex[M_,i_]:=(i-1)+FirstPosition[#,Max[#]]&[Abs[If[SquareMatrixQ[#],#[[i;;,i;;]],#[[i;;,i;;-2]]]&[M]]]
+PivotIndex[M_,i_,chapuz_]:=(i-1)+FirstPosition[#,Max[#]]&[Abs[If[SquareMatrixQ[#],#[[i;;,i;;]],#[[i;;,i;;chapuz]]]&[M]]]
 
 
 (* Pivot[] does the pivoting in the submatrix \[ScriptM] of matrix M, where Subscript[\[ScriptM], 1,1]=Subscript[M, i,i]. *)
-Pivot[M_,i_,colSwaps_]:=Module[{pivotIndex,Mdummy,colSwps},Mdummy=M;
-pivotIndex=PivotIndex[M,i];colSwps=colSwaps;
+Pivot[M_,i_,colSwaps_,chapuz_]:=Module[{pivotIndex,Mdummy,colSwps},Mdummy=M;
+pivotIndex=PivotIndex[M,i,chapuz];colSwps=colSwaps;
 (* Interchange rows *)
 Mdummy[[{i,pivotIndex[[1]]}]]=Mdummy[[{pivotIndex[[1]],i}]];
 (* Interchange columns *)
@@ -64,14 +64,14 @@ IdentityMatrix[N]+SparseArray[uppDiagInd[[R]]->(-U[[#[[1]],#[[2]]]]&/@uppDiagInd
 
 
 (* Function to implement the Gaussian elimination procedure of matrix M *)
-GaussianElimination[M_]:=Module[{N,Mdummy,pivotIndex,colSwaps},
+GaussianElimination[M_,chapuz_:-2]:=Module[{N,Mdummy,pivotIndex,colSwaps},
 Mdummy=M;N=Length[Mdummy];
 (* Create a list to keep record of column swaps. Consider that the matrix M may not be square. *)
 colSwaps=Range[If[SquareMatrixQ[#],N,Dimensions[#][[2]]-1]&[Mdummy]];
 (* If the submatrix formed by deleting the rows and columns above and to the left of position (i,i) is not the zero matrix, then call Pivot[] and make zeroes under the pivot element. *)
 Table[
-If[AnyTrue[Flatten[If[SquareMatrixQ[Mdummy],Mdummy[[i;;,i;;]],Mdummy[[i;;,i;;-2]]]],#!=0&],
-{Mdummy,colSwaps}=Pivot[Mdummy,i,colSwaps];
+If[AnyTrue[Flatten[If[SquareMatrixQ[Mdummy],Mdummy[[i;;,i;;]],Mdummy[[i;;,i;;chapuz]]]],#!=0&],
+{Mdummy,colSwaps}=Pivot[Mdummy,i,colSwaps,chapuz];
 Mdummy[[i,i]]=Round[Mdummy[[i,i]]];
 Mdummy=MatrixToZeroUnderPivot[Mdummy,i] . Mdummy;];
 ,{i,N}];
@@ -91,7 +91,7 @@ U
 
 
 (* Function to implement Gauss Jordan *)
-GaussJordan[M_]:={BackElimination[#[[1]]],#[[2]]}&[GaussianElimination[M]]
+GaussJordan[M_,chapuz_]:={BackElimination[#[[1]]],#[[2]]}&[GaussianElimination[M,chapuz]]
 
 
 (* Assignationk[M,N,n] computes the value of k for the Fock state n of N bosons and M sites *)
