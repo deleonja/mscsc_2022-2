@@ -1,7 +1,19 @@
 *.aux
 *.log
-*.pdf
 *.synctex.gz
 *.out
 *.bbl
 *.blg
+*.tex.bak
+
+
+% PDFs pdflatex
+reportes_tareas/tarea_01.pdf
+reportes_tareas/tarea_02.pdf
+reportes_tareas/tarea_03.pdf
+reportes_tareas/tarea_04.pdf
+reportes_tareas/tarea_05.pdf
+reportes_tareas/tarea_06.pdf
+reportes_tareas/propuesta_proyecto.pdf
+
+Ravent_2017_JPhysB_50_113001(Lewenstein_ED).pdf
