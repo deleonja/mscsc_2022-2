@@ -1,0 +1,70 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{physics}
+\usepackage{hyperref}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\usepackage[draft,inline,nomargin]{fixme} \fxsetup{theme=color}
+\definecolor{jacolor}{RGB}{200,40,0} \FXRegisterAuthor{ja}{aja}{\color{jacolor}JA}
+
+\newcommand{\mcM}{\mathcal{M}}
+
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
+\renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
+
+%%%%% Author
+\author{José Alfredo de León}
+
+%%%% Title 
+\title{Tarea 4\\
+\large{Métodos de Simulación Computacional para Sistemas Cuánticos - 2022-2}}
+
+
+\begin{document}
+\date{28 de febrero de 2022}
+\maketitle
+
+\section{Objetivos}
+\subsection{Objetivo general}
+Implementar mínimos cuadrados.
+
+\subsection{Objetivos específicos}
+\begin{enumerate}
+\item 
+\end{enumerate}
+
+\section{Marco teórico}
+El problema de ajustar una función a datos experimentales. Uno ajusta una
+función y luego cómo prueba que la hipótesis de que esa función le ajusta
+es cierta? Prueba de chi cuadrado.
+
+
+\section{Parte 1: Ejercicios a mano}
+
+
+\section{Parte 2: Implementación Gauss-Jordan}
+
+
+\subsection{Algoritmo}
+\begin{enumerate}
+\item Comenzamos con el estado $|N,\underbrace{0,\ldots,0}_{M\text{ ceros}}\,\rangle$ y $k=1$.
+\item Construimos $\ket{\tilde{n}_1,\ldots,\tilde{n}_M}$ como 
+$\tilde{n}_i=n_i$ ($1\leq i\leq k-1$),
+$\tilde{n}_k=n_k-1$,
+$\tilde{n}_{k+1}=N-\sum_{i=1}^k\tilde{n}_i$ y 
+$\tilde{n}_i=0$ ($k+2\leq i\leq M$).
+\item Asignación de $k$. Para $1\leq i\leq M-1$: 
+Si $n_i\neq 0$ y para $i+1\leq l\leq M-1$ $n_l=0$, entonces $k=i$,  
+en caso contrario ($n_i=0$) asignar \verb|AllnkZero=|\verb|True|.
+\end{enumerate}
+
+
+\subsection{Discusión}
+
+
+\end{document}
