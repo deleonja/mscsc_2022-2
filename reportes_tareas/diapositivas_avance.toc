@@ -1,0 +1,8 @@
+\babel@toc {spanish}{}
+\beamer@sectionintoc {1}{Recordatorio del proyecto}{3}{0}{1}
+\beamer@sectionintoc {2}{Tareas realizadas}{4}{0}{2}
+\beamer@sectionintoc {3}{Modelo de Sherrington-Kirkpatrick{}}{5}{0}{3}
+\beamer@sectionintoc {4}{Algoritmo de Metrópolis-Hastings (MCMC)}{6}{0}{4}
+\beamer@sectionintoc {5}{Resultados}{7}{0}{5}
+\beamer@sectionintoc {6}{Conclusiones}{12}{0}{6}
+\beamer@sectionintoc {7}{De última hora}{13}{0}{7}
